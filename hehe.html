@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícias de Futebol e Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #news-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .news-item {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 280px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .news-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .news-item .content {
+            padding: 15px;
+        }
+        .news-item .content h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .news-item .content p {
+            color: #555;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Notícias de Futebol e Games</h1>
+    <button id="load-news-btn">Carregar Novas Notícias</button>
+    <div id="news-container"></div>
+
+    <script>
+        const apiKey = '0e2aec327a7f46e6baf0f2857ad34f4f';
+        const apiUrl = 'https://newsapi.org/v2/everything?';
+
+        async function fetchNews() {
+            const query = 'futebol brasileiro OR games';
+            const url = `${apiUrl}q=${query}&apiKey=${apiKey}&pageSize=3`; // Carregar 3 notícias por vez
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayNews(data.articles);
+            } catch (error) {
+                console.error('Erro ao buscar as notícias:', error);
+            }
+        }
+
+        function displayNews(articles) {
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = ''; // Limpa as notícias anteriores
+
+            articles.forEach(article => {
+                const newsItem = document.createElement('div');
+                newsItem.classList.add('news-item');
+
+                newsItem.innerHTML = `
+                    <img src="${article.urlToImage || 'https://via.placeholder.com/300x200'}" alt="Imagem da Notícia">
+                    <div class="content">
+                        <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+                        <p>${article.description || 'Sem descrição disponível.'}</p>
+                    </div>
+                `;
+                newsContainer.appendChild(newsItem);
+            });
+        }
+
+        document.getElementById('load-news-btn').addEventListener('click', fetchNews);
+
+    </script>
+</body>
+</html>
